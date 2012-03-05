@@ -69,7 +69,6 @@
         }
         if (!targetView) {
             targetView = [[PGTargetView alloc] initWithFrame:self.frame];
-            targetView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         }
         if (!inputView) {
             inputView = [[PGInputView alloc] initWithFrame:CGRectMake(-1, -1, 1, 1)];
