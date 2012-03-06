@@ -148,7 +148,6 @@
         self.backgroundColor = [UIColor clearColor];
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
         self.contentMode = UIViewContentModeRedraw;
-
     }
 
     return self;

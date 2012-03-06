@@ -92,6 +92,32 @@
 - (void)rotateGesture:(UIGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateEnded) {
         self.locked = !locked;
+
+        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
+        label.backgroundColor = [UIColor blackColor];
+        label.textColor = [UIColor whiteColor];
+        label.textAlignment = UITextAlignmentCenter;
+        label.font = [UIFont boldSystemFontOfSize:25];
+        label.layer.cornerRadius = 5;
+
+        if (locked) {
+            label.text = @"Locked";
+        } else {
+            label.text = @"Unlocked";
+        }
+
+        CGRect frame = self.rootViewController.view.bounds;
+
+        [label sizeToFit];
+        label.frame = CGRectInset(label.frame, -40, -20);
+        label.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
+
+        [self.rootViewController.view addSubview:label];
+        [UIView animateWithDuration:1 delay:1 options:UIViewAnimationOptionCurveLinear animations:^{
+            label.alpha = 0;
+        } completion:^(BOOL finished) {
+            [label removeFromSuperview];
+        }];
     }
 }
 
