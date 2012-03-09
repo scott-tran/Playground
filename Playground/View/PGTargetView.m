@@ -33,13 +33,18 @@
     resizeRect = CGRectInset(target.frame, -20, -20);
 
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetLineWidth(context, 2);
-    CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
+    CGContextSetLineWidth(context, 1);
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    UIFont *font = [UIFont systemFontOfSize:15];
+    UIFont *font = [UIFont boldSystemFontOfSize:11];
+    CGContextSetStrokeColorWithColor(context, [UIColor orangeColor].CGColor);
+
+    CGContextStrokeRect(context, target.frame);
+
 
     CGFloat dash[2] = {2, 5};
     CGContextSetLineDash(context, 0, dash, 2);
+    CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
+    CGContextSetLineWidth(context, 2);
 
     CGFloat minX = CGRectGetMinX(target.frame);
     CGFloat minY = CGRectGetMinY(target.frame);
@@ -89,10 +94,10 @@
     CGSize frameSize = [frame sizeWithFont:font];
 
     // align on bottom
-    CGRect frameRect = CGRectMake(midX - (frameSize.width/2), maxY + 12, frameSize.width, frameSize.height);
+    CGRect frameRect = CGRectMake(midX - (frameSize.width/2), maxY + 8, frameSize.width, frameSize.height);
     if (!CGRectContainsRect(rect, frameRect)) {
         // frameRect won't fit, try top
-        frameRect.origin.y = minY - frameSize.height - 12;
+        frameRect.origin.y = minY - frameSize.height - 8;
         if (!CGRectContainsRect(rect, frameRect)) {
             // try left
             frameRect.origin.x = minX - frameSize.width - 12;
@@ -108,38 +113,38 @@
     [frame drawInRect:frameRect withFont:font];
 
     // resize handles
-    minX -= 10;
-    minY -= 10;
-    maxX += 10;
-    maxY += 10;
-
-    CGContextSetStrokeColorWithColor(context, [UIColor orangeColor].CGColor);
-    CGContextSetLineDash(context, 0, NULL, 0);
-    CGContextSetLineWidth(context, 5);
-
-    // top left
-    CGContextMoveToPoint(context, minX, minY + 20);
-    CGContextAddLineToPoint(context, minX, minY);
-    CGContextAddLineToPoint(context, minX + 20, minY);
-    CGContextStrokePath(context);
-
-    // top right
-    CGContextMoveToPoint(context, maxX - 20, minY);
-    CGContextAddLineToPoint(context, maxX, minY);
-    CGContextAddLineToPoint(context, maxX, minY + 20);
-    CGContextStrokePath(context);
-
-    // bottom left
-    CGContextMoveToPoint(context, minX, maxY - 20);
-    CGContextAddLineToPoint(context, minX, maxY);
-    CGContextAddLineToPoint(context, minX + 20, maxY);
-    CGContextStrokePath(context);
-
-    // bottom right
-    CGContextMoveToPoint(context, maxX , maxY - 20);
-    CGContextAddLineToPoint(context, maxX, maxY);
-    CGContextAddLineToPoint(context, maxX - 20, maxY);
-    CGContextStrokePath(context);
+//    minX -= 10;
+//    minY -= 10;
+//    maxX += 10;
+//    maxY += 10;
+//
+//    CGContextSetStrokeColorWithColor(context, [UIColor orangeColor].CGColor);
+//    CGContextSetLineDash(context, 0, NULL, 0);
+//    CGContextSetLineWidth(context, 5);
+//
+//    // top left
+//    CGContextMoveToPoint(context, minX, minY + 20);
+//    CGContextAddLineToPoint(context, minX, minY);
+//    CGContextAddLineToPoint(context, minX + 20, minY);
+//    CGContextStrokePath(context);
+//
+//    // top right
+//    CGContextMoveToPoint(context, maxX - 20, minY);
+//    CGContextAddLineToPoint(context, maxX, minY);
+//    CGContextAddLineToPoint(context, maxX, minY + 20);
+//    CGContextStrokePath(context);
+//
+//    // bottom left
+//    CGContextMoveToPoint(context, minX, maxY - 20);
+//    CGContextAddLineToPoint(context, minX, maxY);
+//    CGContextAddLineToPoint(context, minX + 20, maxY);
+//    CGContextStrokePath(context);
+//
+//    // bottom right
+//    CGContextMoveToPoint(context, maxX , maxY - 20);
+//    CGContextAddLineToPoint(context, maxX, maxY);
+//    CGContextAddLineToPoint(context, maxX - 20, maxY);
+//    CGContextStrokePath(context);
 }
 
 - (id)initWithFrame:(CGRect)frame {

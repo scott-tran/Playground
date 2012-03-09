@@ -6,35 +6,18 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum {
-    PGMoveLeft,
-    PGMoveRight,
-    PGMoveUp,
-    PGMoveDown,
-    PGIncreaseWidth,
-    PGDecreaseWidth,
-    PGIncreaseHeight,
-    PGDecreaseHeight,
-    PGMoveLeftInViews,
-    PGMoveRightInViews,
-    PGMoveUpInViews,
-    PGMoveDownInViews,
-    PGProperties
-} PGInputAction;
+@protocol PGActionDelegate;
 
-@protocol PGInputViewDelegate
-- (void)inputAction:(PGInputAction)action;
-@end
 
 @interface PGInputView : UIView
         <UITextViewDelegate> {
 
     UITextView *inputView;
 
-    __weak id <PGInputViewDelegate> delegate;
+    id<PGActionDelegate> delegate;
 }
 
-@property(weak) id <PGInputViewDelegate> delegate;
+@property(assign) id<PGActionDelegate> delegate;
 
 - (void)activateKeyboard;
 

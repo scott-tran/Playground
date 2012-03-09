@@ -5,6 +5,7 @@
 
 
 #import "PGInputView.h"
+#import "PGAction.h"
 
 
 @implementation PGInputView {
@@ -21,9 +22,9 @@
     [inputView resignFirstResponder];
 }
 
-- (void)sendAction:(PGInputAction)action {
+- (void)sendAction:(PGAction)action {
     if (delegate) {
-        [delegate inputAction:action];
+        [delegate receiveAction:action];
     }
 }
                                        

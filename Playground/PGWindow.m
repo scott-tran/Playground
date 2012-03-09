@@ -4,15 +4,19 @@
 //
 
 
-#import "PlaygroundWindow.h"
+#import "PGWindow.h"
 #import "PGTargetView.h"
+#import "PGMenuView.h"
+#import "PGInputView.h"
 
 
-@implementation PlaygroundWindow {
+@implementation PGWindow {
 
 
 }
 @synthesize locked;
+@synthesize menuView;
+
 
 - (NSMutableArray *)viewsAtPoint:(CGPoint)touchPoint view:(UIView *)view {
     NSMutableArray *views = [[NSMutableArray alloc] init];
@@ -28,6 +32,7 @@
     return [views autorelease];
 }
 
+
 - (UIView *)findTarget:(CGPoint)touchPoint {
     NSMutableArray *views = [self viewsAtPoint:touchPoint view:self.rootViewController.view];
     if ([views count] == 0) {
@@ -41,6 +46,9 @@
 - (void)deactivateTarget {
     [selectedView.superview insertSubview:selectedView atIndex:selectedIndex];
     selectedView = nil;
+
+    menuView.target = nil;
+    [menuView updateTargetInfo];
 
     [targetView removeFromSuperview];
 
@@ -63,7 +71,7 @@
 
         if (!overlayView) {
             overlayView = [[UIView alloc] initWithFrame:self.frame];
-            overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+            overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             overlayView.backgroundColor = [UIColor blackColor];
             overlayView.alpha = 0.5;
         }
@@ -74,6 +82,8 @@
             inputView = [[PGInputView alloc] initWithFrame:CGRectMake(-1, -1, 1, 1)];
             inputView.delegate = self;
         }
+
+        menuView.target = selectedView;
         targetView.target = selectedView;
         overlayView.frame = targetView.frame;
 
@@ -81,6 +91,7 @@
         [view.superview insertSubview:overlayView belowSubview:selectedView];
         [view.superview addSubview:targetView];
 
+        [menuView updateTargetInfo];
         [targetView setNeedsDisplay];
 
         [self addSubview:inputView];
@@ -115,7 +126,7 @@
         [self.rootViewController.view addSubview:label];
         [UIView animateWithDuration:1 delay:1 options:UIViewAnimationOptionCurveLinear animations:^{
             label.alpha = 0;
-        } completion:^(BOOL finished) {
+        }                completion:^(BOOL finished) {
             [label removeFromSuperview];
         }];
     }
@@ -154,28 +165,30 @@
                 CGPoint vector = CGPointMake(startPoint.x - touchPoint.x, startPoint.y - touchPoint.y);
 
                 // move selectedview
-                frame.origin.x = frame.origin.x - vector.x;
-                frame.origin.y = frame.origin.y - vector.y;
+                frame.origin.x -= vector.x;
+                frame.origin.y -= vector.y;
             } else {
                 // resize selected view
                 CGPoint vector = CGPointMake(startPoint.x - touchPoint.x, startPoint.y - touchPoint.y);
 
                 if (selectedView.center.x > touchPoint.x) {
-                    frame.origin.x = frame.origin.x - vector.x;
-                    frame.size.width = frame.size.width + vector.x;
+                    frame.origin.x -= vector.x;
+                    frame.size.width += vector.x;
                 } else {
-                    frame.size.width = frame.size.width - vector.x;
+                    frame.size.width -= vector.x;
                 }
 
                 if (selectedView.center.y > touchPoint.y) {
-                    frame.origin.y = frame.origin.y - vector.y;
-                    frame.size.height = frame.size.height + vector.y;
+                    frame.origin.y -= vector.y;
+                    frame.size.height += vector.y;
                 } else {
-                    frame.size.height = frame.size.height - vector.y;
+                    frame.size.height -= vector.y;
                 }
             }
 
             selectedView.frame = frame;
+
+            [menuView updateTargetInfo];
             [targetView setNeedsDisplay];
             startPoint = touchPoint;
         }
@@ -183,7 +196,20 @@
 
 }
 
-- (void)inputAction:(PGInputAction)action {
+- (void)longPressGesture:(UIGestureRecognizer *)recognizer {
+    if (recognizer.state == UIGestureRecognizerStateBegan) {
+        if (!menuView.superview) {
+            CGRect rect = self.rootViewController.view.bounds;
+            menuView.center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
+            [self addSubview:menuView];
+        } else {
+            menuView.target = nil;
+            [menuView removeFromSuperview];
+        }
+    }
+}
+
+- (void)receiveAction:(PGAction)action {
     CGRect frame = selectedView.frame;
 
     switch (action) {
@@ -255,11 +281,12 @@
             break;
     }
 
+    [menuView updateTargetInfo];
     [targetView setNeedsDisplay];
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    if (locked) {
+    if (locked || (CGRectContainsPoint(menuView.frame, [gestureRecognizer locationInView:self.rootViewController.view]))) {
         return NO;
     } else {
         return YES;
@@ -270,7 +297,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.backgroundColor = [UIColor yellowColor];
-        self.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
+        self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.userInteractionEnabled = YES;
         self.locked = YES;
 
@@ -287,6 +314,23 @@
         panGesture.delegate = self;
         [self addGestureRecognizer:panGesture];
         [panGesture release];
+
+        UILongPressGestureRecognizer *longGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGesture:)];
+        longGesture.delegate = self;
+        [self addGestureRecognizer:longGesture];
+        [longGesture release];
+    }
+
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame locked:(BOOL)lock {
+    self = [self initWithFrame:frame];
+    if (self) {
+        self.locked = lock;
+
+        self.menuView = [[PGMenuView alloc] initWithFrame:CGRectZero];
+        menuView.delegate = self;
     }
 
     return self;
@@ -296,6 +340,9 @@
     if (locked) {
         return [super hitTest:point withEvent:event];
     } else {
+        if (CGRectContainsPoint(menuView.frame, point)) {
+            return [super hitTest:point withEvent:event];
+        }
         // prevent subviews from receiving events
         return self;
     }

@@ -8,12 +8,12 @@
 
 
 @interface PGTargetView : UIView   {
-    __weak UIView *target;
+    UIView *target;
     CGRect resizeRect;
     BOOL resizing;
 
 }
-@property(nonatomic, weak) UIView *target;
+@property(nonatomic, assign) UIView *target;
 @property(nonatomic) BOOL resizing;
 
 - (BOOL)shouldResize:(CGPoint)point;

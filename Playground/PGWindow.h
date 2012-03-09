@@ -6,12 +6,14 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "PGInputView.h"
+#import "PGAction.h"
 
 @class PGTargetView;
+@class PGMenuView;
+@class PGInputView;
 
-@interface PlaygroundWindow : UIWindow
-<PGInputViewDelegate,
+@interface PGWindow : UIWindow
+<PGActionDelegate,
         UIGestureRecognizerDelegate> {
 
     BOOL locked;
@@ -23,10 +25,17 @@
     PGTargetView *targetView;
     UIView *overlayView;
 
+    PGMenuView *menuView;
+
     CGPoint startPoint;
     BOOL moving;
 
 }
 @property(nonatomic) BOOL locked;
+@property(nonatomic, retain) PGMenuView *menuView;
+
+
+- (id)initWithFrame:(CGRect)frame locked:(BOOL)lock;
+
 
 @end
