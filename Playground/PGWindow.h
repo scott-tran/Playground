@@ -23,7 +23,6 @@
 
     PGInputView *inputView;
     PGTargetView *targetView;
-    UIView *overlayView;
 
     PGMenuView *menuView;
 

@@ -22,7 +22,7 @@
     NSMutableArray *views = [[NSMutableArray alloc] init];
     for (UIView *subview in view.subviews) {
         if (CGRectContainsPoint(subview.frame, touchPoint)) {
-            if (subview != overlayView && subview != targetView) {
+            if (subview != targetView) {
                 [views addObject:subview];
                 [views addObjectsFromArray:[self viewsAtPoint:[view convertPoint:touchPoint toView:subview] view:subview]];
             }
@@ -44,7 +44,6 @@
 }
 
 - (void)deactivateTarget {
-    [selectedView.superview insertSubview:selectedView atIndex:selectedIndex];
     selectedView = nil;
 
     menuView.target = nil;
@@ -54,8 +53,6 @@
 
     [inputView removeFromSuperview];
     [inputView deactivateKeyboard];
-
-    [overlayView removeFromSuperview];
 }
 
 - (void)activateTarget:(UIView *)view {
@@ -69,12 +66,6 @@
         selectedIndex = [view.superview.subviews indexOfObject:view];
         selectedView = view;
 
-        if (!overlayView) {
-            overlayView = [[UIView alloc] initWithFrame:self.frame];
-            overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-            overlayView.backgroundColor = [UIColor blackColor];
-            overlayView.alpha = 0.5;
-        }
         if (!targetView) {
             targetView = [[PGTargetView alloc] initWithFrame:self.frame];
         }
@@ -85,10 +76,7 @@
 
         menuView.target = selectedView;
         targetView.target = selectedView;
-        overlayView.frame = targetView.frame;
 
-        [view.superview bringSubviewToFront:selectedView];
-        [view.superview insertSubview:overlayView belowSubview:selectedView];
         [view.superview addSubview:targetView];
 
         [menuView updateTargetInfo];
@@ -331,7 +319,7 @@
     if (self) {
         self.locked = lock;
 
-        self.menuView = [[PGMenuView alloc] initWithFrame:CGRectZero];
+        self.menuView = [[[PGMenuView alloc] initWithFrame:CGRectZero] autorelease];
         menuView.delegate = self;
     }
 
@@ -353,7 +341,7 @@
 - (void)dealloc {
     [targetView release];
     [inputView release];
-    [overlayView release];
+    [menuView release];
 
     [super dealloc];
 }
