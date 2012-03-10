@@ -146,7 +146,6 @@
     UIGraphicsBeginImageContext(CGSizeMake(1, 2));
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetFillColorWithColor(context, [UIColor colorWithRed:31/255.0 green:31/255.0 blue:31/255.0 alpha:1].CGColor);
-//    CGContextSetFillColorWithColor(context, [UIColor darkGrayColor].CGColor);
 
     CGContextFillRect(context, CGRectMake(0, 0, 1, 2));
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();

@@ -37,15 +37,13 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetLineWidth(context, 1);
     CGContextSetStrokeColorWithColor(context, color.CGColor);
-
-    CGContextStrokeRect(context, target.frame);
-
     CGContextSetFillColorWithColor(context, color.CGColor);
     UIFont *font = [UIFont boldSystemFontOfSize:11];
 
+    CGContextStrokeRect(context, target.frame);
+
     CGFloat dash[2] = {2, 5};
     CGContextSetLineDash(context, 0, dash, 2);
-    CGContextSetStrokeColorWithColor(context, color.CGColor);
     CGContextSetLineWidth(context, 3);
 
     CGFloat minX = CGRectGetMinX(target.frame);

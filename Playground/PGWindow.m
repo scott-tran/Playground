@@ -122,8 +122,6 @@
 
 - (void)tapGesture:(UIGestureRecognizer *)recognizer {
     CGPoint touchPoint = [recognizer locationInView:self.rootViewController.view];
-    NSLog(@"tapped at: %@", NSStringFromCGPoint(touchPoint));
-
     UIView *target = [self findTarget:touchPoint];
 
     if (!target && selectedView) {
@@ -259,8 +257,10 @@
             break;
         case PGProperties:
         {
-            NSMutableString *properties = [NSMutableString stringWithFormat:@"\n************* %@ : %d *************\n", selectedView.class, selectedView.tag];
-            [properties appendFormat:@"frame:\nCGRectMake(%.0f, %.0f, %.0f, %.0f);\n", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
+            NSString *accessibilityIdentifier = !selectedView.accessibilityIdentifier ? @"Accessibility Identifier" : selectedView.accessibilityIdentifier;
+
+            NSMutableString *properties = [NSMutableString stringWithFormat:@"\n************* %@ : %@ : %d *************\n", accessibilityIdentifier, selectedView.class, selectedView.tag];
+            [properties appendFormat:@"FRAME:\nCGRectMake(%.0f, %.0f, %.0f, %.0f);\n", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
 
             NSLog(@"%@", properties);
             break;
