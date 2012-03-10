@@ -122,6 +122,8 @@
 
 - (void)tapGesture:(UIGestureRecognizer *)recognizer {
     CGPoint touchPoint = [recognizer locationInView:self.rootViewController.view];
+    NSLog(@"tapped at: %@", NSStringFromCGPoint(touchPoint));
+
     UIView *target = [self findTarget:touchPoint];
 
     if (!target && selectedView) {
@@ -137,13 +139,11 @@
 
         if (recognizer.state == UIGestureRecognizerStateBegan) {
             startPoint = touchPoint;
-            if (targetView) {
-                // inside target
-                if ([targetView shouldMove:touchPoint]) {
-                    moving = YES;
-                } else if ([targetView shouldResize:touchPoint]) {
-                    moving = NO;
-                }
+            // inside target
+            if ([targetView shouldMove:touchPoint]) {
+                moving = YES;
+            } else if ([targetView shouldResize:touchPoint]) {
+                moving = NO;
             }
         }
 
@@ -189,7 +189,7 @@
         if (!menuView.superview) {
             CGRect rect = self.rootViewController.view.bounds;
             menuView.center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
-            [self addSubview:menuView];
+            [self.rootViewController.view addSubview:menuView];
         } else {
             menuView.target = nil;
             [menuView removeFromSuperview];
@@ -202,7 +202,6 @@
 
     switch (action) {
         case PGMoveLeft:
-//            NSLog(@"moving left");
             frame.origin.x -= 1;
             selectedView.frame = frame;
             break;
@@ -211,7 +210,6 @@
             selectedView.frame = frame;
             break;
         case PGMoveUp:
-//            NSLog(@"moving up");
             frame.origin.y -= 1;
             selectedView.frame = frame;
             break;
@@ -241,7 +239,7 @@
             }
             break;
         case PGMoveRightInViews:
-            if (selectedIndex < [selectedView.superview.subviews count] - 3) {
+            if (selectedIndex < [selectedView.superview.subviews count] - 1) {
                 // account for subviews added
                 UIView *target = selectedView;
                 NSUInteger index = selectedIndex + 1;
@@ -276,10 +274,14 @@
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    if (locked || (CGRectContainsPoint(menuView.frame, [gestureRecognizer locationInView:self.rootViewController.view]))) {
+    if (locked) {
         return NO;
     } else {
-        return YES;
+        if (menuView.superview && (CGRectContainsPoint(menuView.frame, [gestureRecognizer locationInView:self.rootViewController.view]))) {
+            return NO;
+        } else {
+            return YES;
+        }
     }
 }
 
@@ -309,6 +311,9 @@
         longGesture.delegate = self;
         [self addGestureRecognizer:longGesture];
         [longGesture release];
+
+        self.menuView = [[[PGMenuView alloc] initWithFrame:CGRectZero] autorelease];
+        menuView.delegate = self;
     }
 
     return self;
@@ -318,9 +323,6 @@
     self = [self initWithFrame:frame];
     if (self) {
         self.locked = lock;
-
-        self.menuView = [[[PGMenuView alloc] initWithFrame:CGRectZero] autorelease];
-        menuView.delegate = self;
     }
 
     return self;
@@ -330,7 +332,7 @@
     if (locked) {
         return [super hitTest:point withEvent:event];
     } else {
-        if (CGRectContainsPoint(menuView.frame, point)) {
+        if (CGRectContainsPoint(menuView.frame, [self convertPoint:point toView:self.rootViewController.view])) {
             return [super hitTest:point withEvent:event];
         }
         // prevent subviews from receiving events
