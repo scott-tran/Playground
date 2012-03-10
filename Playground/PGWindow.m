@@ -79,7 +79,7 @@
             targetView = [[PGTargetView alloc] initWithFrame:self.frame];
         }
         if (!inputView) {
-            inputView = [[PGInputView alloc] initWithFrame:CGRectMake(-1, -1, 1, 1)];
+            inputView = [[PGInputView alloc] initWithFrame:CGRectMake(-1, -1, 50, 50)];
             inputView.delegate = self;
         }
 
@@ -214,6 +214,7 @@
 
     switch (action) {
         case PGMoveLeft:
+//            NSLog(@"moving left");
             frame.origin.x -= 1;
             selectedView.frame = frame;
             break;
@@ -222,6 +223,7 @@
             selectedView.frame = frame;
             break;
         case PGMoveUp:
+//            NSLog(@"moving up");
             frame.origin.y -= 1;
             selectedView.frame = frame;
             break;
