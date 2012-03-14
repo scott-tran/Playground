@@ -11,6 +11,7 @@
 @class PGTargetView;
 @class PGMenuView;
 @class PGInputView;
+@class PGToolbar;
 
 @interface PGWindow : UIWindow
 <PGActionDelegate,
@@ -24,14 +25,14 @@
     PGInputView *inputView;
     PGTargetView *targetView;
 
-    PGMenuView *menuView;
+    PGToolbar *toolbar;
 
     CGPoint startPoint;
     BOOL moving;
 
 }
 @property(nonatomic) BOOL locked;
-@property(nonatomic, retain) PGMenuView *menuView;
+@property(nonatomic, retain) PGToolbar *toolbar;
 
 
 - (id)initWithFrame:(CGRect)frame locked:(BOOL)lock;

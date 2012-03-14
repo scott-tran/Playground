@@ -32,7 +32,7 @@
 - (void)drawRect:(CGRect)rect {
     resizeRect = CGRectInset(target.frame, -20, -20);
 
-    UIColor *color = [UIColor greenColor];
+    UIColor *color = [UIColor redColor];
 
     CGContextRef context = UIGraphicsGetCurrentContext();
     CGContextSetLineWidth(context, 1);

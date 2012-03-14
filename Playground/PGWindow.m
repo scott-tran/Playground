@@ -6,8 +6,8 @@
 
 #import "PGWindow.h"
 #import "PGTargetView.h"
-#import "PGMenuView.h"
 #import "PGInputView.h"
+#import "PGToolbar.h"
 
 
 @implementation PGWindow {
@@ -15,7 +15,7 @@
 
 }
 @synthesize locked;
-@synthesize menuView;
+@synthesize toolbar;
 
 
 - (NSMutableArray *)viewsAtPoint:(CGPoint)touchPoint view:(UIView *)view {
@@ -46,8 +46,8 @@
 - (void)deactivateTarget {
     selectedView = nil;
 
-    menuView.target = nil;
-    [menuView updateTargetInfo];
+    toolbar.target = nil;
+    [toolbar updateTargetInfo];
 
     [targetView removeFromSuperview];
 
@@ -73,13 +73,21 @@
             inputView = [[PGInputView alloc] initWithFrame:CGRectMake(-1, -1, 50, 50)];
             inputView.delegate = self;
         }
+        if (!toolbar) {
+            self.toolbar = [[[PGToolbar alloc] initWithFrame:CGRectZero] autorelease];
+            toolbar.delegate = self;
+        }
 
-        menuView.target = selectedView;
+        toolbar.target = selectedView;
         targetView.target = selectedView;
 
         [view.superview addSubview:targetView];
 
-        [menuView updateTargetInfo];
+        CGRect rect = self.rootViewController.view.bounds;
+        toolbar.center = CGPointMake(toolbar.center.x, CGRectGetMidY(rect));
+        [self.rootViewController.view addSubview:toolbar];
+
+        [toolbar updateTargetInfo];
         [targetView setNeedsDisplay];
 
         [self addSubview:inputView];
@@ -88,7 +96,7 @@
 
 }
 
-- (void)rotateGesture:(UIGestureRecognizer *)recognizer {
+- (void)unlockGesture:(UIGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateEnded) {
         self.locked = !locked;
 
@@ -101,6 +109,7 @@
 
         if (locked) {
             label.text = @"Locked";
+            [toolbar removeFromSuperview];
         } else {
             label.text = @"Unlocked";
         }
@@ -112,10 +121,12 @@
         label.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
 
         [self.rootViewController.view addSubview:label];
+
         [UIView animateWithDuration:1 delay:1 options:UIViewAnimationOptionCurveLinear animations:^{
             label.alpha = 0;
-        }                completion:^(BOOL finished) {
+        }  completion:^(BOOL finished) {
             [label removeFromSuperview];
+
         }];
     }
 }
@@ -174,25 +185,12 @@
 
             selectedView.frame = frame;
 
-            [menuView updateTargetInfo];
+            [toolbar updateTargetInfo];
             [targetView setNeedsDisplay];
             startPoint = touchPoint;
         }
     }
 
-}
-
-- (void)longPressGesture:(UIGestureRecognizer *)recognizer {
-    if (recognizer.state == UIGestureRecognizerStateBegan) {
-        if (!menuView.superview) {
-            CGRect rect = self.rootViewController.view.bounds;
-            menuView.center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
-            [self.rootViewController.view addSubview:menuView];
-        } else {
-            menuView.target = nil;
-            [menuView removeFromSuperview];
-        }
-    }
 }
 
 - (void)receiveAction:(PGAction)action {
@@ -257,9 +255,9 @@
             break;
         case PGProperties:
         {
-            NSString *accessibilityIdentifier = !selectedView.accessibilityIdentifier ? @"Accessibility Identifier" : selectedView.accessibilityIdentifier;
+            NSString *name = !selectedView.accessibilityIdentifier ? NSStringFromClass([selectedView class]) : selectedView.accessibilityIdentifier;
 
-            NSMutableString *properties = [NSMutableString stringWithFormat:@"\n************* %@ : %@ : %d *************\n", accessibilityIdentifier, selectedView.class, selectedView.tag];
+            NSMutableString *properties = [NSMutableString stringWithFormat:@"\n************* %@ : %@ : %d *************\n", name, selectedView.class, selectedView.tag];
             [properties appendFormat:@"FRAME:\nCGRectMake(%.0f, %.0f, %.0f, %.0f);\n", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
 
             NSLog(@"%@", properties);
@@ -269,7 +267,7 @@
             break;
     }
 
-    [menuView updateTargetInfo];
+    [toolbar updateTargetInfo];
     [targetView setNeedsDisplay];
 }
 
@@ -277,7 +275,7 @@
     if (locked) {
         return NO;
     } else {
-        if (menuView.superview && (CGRectContainsPoint(menuView.frame, [gestureRecognizer locationInView:self.rootViewController.view]))) {
+        if (toolbar.superview && (CGRectContainsPoint(toolbar.frame, [gestureRecognizer locationInView:self.rootViewController.view]))) {
             return NO;
         } else {
             return YES;
@@ -293,9 +291,10 @@
         self.userInteractionEnabled = YES;
         self.locked = YES;
 
-        UIRotationGestureRecognizer *rotationGesture = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(rotateGesture:)];
-        [self addGestureRecognizer:rotationGesture];
-        [rotationGesture release];
+        UITapGestureRecognizer *unlockGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(unlockGesture:)];
+        unlockGesture.numberOfTouchesRequired = 2;
+        [self addGestureRecognizer:unlockGesture];
+        [unlockGesture release];
 
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGesture:)];
         tapGesture.delegate = self;
@@ -307,13 +306,6 @@
         [self addGestureRecognizer:panGesture];
         [panGesture release];
 
-        UILongPressGestureRecognizer *longGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressGesture:)];
-        longGesture.delegate = self;
-        [self addGestureRecognizer:longGesture];
-        [longGesture release];
-
-        self.menuView = [[[PGMenuView alloc] initWithFrame:CGRectZero] autorelease];
-        menuView.delegate = self;
     }
 
     return self;
@@ -332,7 +324,7 @@
     if (locked) {
         return [super hitTest:point withEvent:event];
     } else {
-        if (CGRectContainsPoint(menuView.frame, [self convertPoint:point toView:self.rootViewController.view])) {
+        if (CGRectContainsPoint(toolbar.frame, [self convertPoint:point toView:self.rootViewController.view])) {
             return [super hitTest:point withEvent:event];
         }
         // prevent subviews from receiving events
@@ -343,7 +335,7 @@
 - (void)dealloc {
     [targetView release];
     [inputView release];
-    [menuView release];
+    [toolbar release];
 
     [super dealloc];
 }

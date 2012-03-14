@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		E49056A9150649F4007826EF /* PGMenuView.h in Headers */ = {isa = PBXBuildFile; fileRef = E49056A7150649F4007826EF /* PGMenuView.h */; };
 		E49056AA150649F4007826EF /* PGMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = E49056A8150649F4007826EF /* PGMenuView.m */; };
+		E4BAC8E8150CECCD00630D90 /* PGToolbar.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BAC8E6150CECCD00630D90 /* PGToolbar.h */; };
+		E4BAC8E9150CECCD00630D90 /* PGToolbar.m in Sources */ = {isa = PBXBuildFile; fileRef = E4BAC8E7150CECCD00630D90 /* PGToolbar.m */; };
 		E4BCF9221503D3BC0092052F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4BCF9211503D3BC0092052F /* Foundation.framework */; };
 		E4BCF9381503D5BF0092052F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4BCF9371503D5BF0092052F /* UIKit.framework */; };
 		E4BCF93A1503D5C60092052F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4BCF9391503D5C60092052F /* QuartzCore.framework */; };
@@ -24,6 +26,8 @@
 /* Begin PBXFileReference section */
 		E49056A7150649F4007826EF /* PGMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGMenuView.h; sourceTree = "<group>"; };
 		E49056A8150649F4007826EF /* PGMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGMenuView.m; sourceTree = "<group>"; };
+		E4BAC8E6150CECCD00630D90 /* PGToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGToolbar.h; sourceTree = "<group>"; };
+		E4BAC8E7150CECCD00630D90 /* PGToolbar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGToolbar.m; sourceTree = "<group>"; };
 		E4BCF91E1503D3BC0092052F /* libPlayground.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPlayground.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4BCF9211503D3BC0092052F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E4BCF9251503D3BC0092052F /* Playground-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Playground-Prefix.pch"; path = "../Playground-Prefix.pch"; sourceTree = "<group>"; };
@@ -111,6 +115,8 @@
 				E49056A8150649F4007826EF /* PGMenuView.m */,
 				E4BCF93A1503D5C600920537 /* PGTargetView.h */,
 				E4BCF93A1503D5C600920535 /* PGTargetView.m */,
+				E4BAC8E6150CECCD00630D90 /* PGToolbar.h */,
+				E4BAC8E7150CECCD00630D90 /* PGToolbar.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -127,6 +133,7 @@
 				E4BCF93A1503D5C60092053C /* PGInputView.h in Headers */,
 				E49056A9150649F4007826EF /* PGMenuView.h in Headers */,
 				E4BCF93A1503D5C60092053E /* PGAction.h in Headers */,
+				E4BAC8E8150CECCD00630D90 /* PGToolbar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -185,6 +192,7 @@
 				E4BCF93A1503D5C600920536 /* PGTargetView.m in Sources */,
 				E4BCF93A1503D5C60092053A /* PGInputView.m in Sources */,
 				E49056AA150649F4007826EF /* PGMenuView.m in Sources */,
+				E4BAC8E9150CECCD00630D90 /* PGToolbar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
