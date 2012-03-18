@@ -31,7 +31,6 @@ typedef enum {
     UIView *overlay;
 
     BOOL expanded;
-    CGFloat originalY;
 
     PGToolbarMode mode;
 

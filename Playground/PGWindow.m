@@ -51,8 +51,10 @@
 
     [targetView removeFromSuperview];
 
-    [inputView removeFromSuperview];
-    [inputView deactivateKeyboard];
+    if (inputView) {
+        [inputView removeFromSuperview];
+        [inputView deactivateKeyboard];
+    }
 }
 
 - (void)activateTarget:(UIView *)view {
@@ -69,10 +71,14 @@
         if (!targetView) {
             targetView = [[PGTargetView alloc] initWithFrame:self.frame];
         }
+
+#if TARGET_IPHONE_SIMULATOR
         if (!inputView) {
             inputView = [[PGInputView alloc] initWithFrame:CGRectMake(-1, -1, 50, 50)];
             inputView.delegate = self;
         }
+#endif
+
         if (!toolbar) {
             self.toolbar = [[[PGToolbar alloc] initWithFrame:CGRectZero] autorelease];
             toolbar.delegate = self;
@@ -90,8 +96,10 @@
         [toolbar updateTargetInfo];
         [targetView setNeedsDisplay];
 
-        [self addSubview:inputView];
-        [inputView activateKeyboard];
+        if (inputView) {
+            [self addSubview:inputView];
+            [inputView activateKeyboard];
+        }
     }
 
 }
@@ -332,7 +340,7 @@
 
     label.text = message;
 
-    UIView *rootView =  [UIApplication sharedApplication].delegate.window.rootViewController.view;
+    UIView *rootView = [UIApplication sharedApplication].delegate.window.rootViewController.view;
     CGRect frame = rootView.bounds;
 
     [label sizeToFit];
@@ -343,9 +351,9 @@
 
     [UIView animateWithDuration:.5 delay:1 options:UIViewAnimationOptionCurveLinear animations:^{
         label.alpha = 0;
-    }  completion:^(BOOL finished) {
+    }                completion:^(BOOL finished) {
         [label removeFromSuperview];
 
-    }];    
+    }];
 }
 @end

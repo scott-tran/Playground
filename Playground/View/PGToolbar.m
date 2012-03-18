@@ -145,7 +145,7 @@
         case 1:
             if (expanded) {
                 frame.size.width = 196;
-                overlay.frame = [[UIScreen mainScreen] bounds];
+                overlay.frame = self.superview.bounds;
                 [self.superview insertSubview:overlay belowSubview:self];
 
                 [self addSubview:commandBar];
@@ -159,9 +159,6 @@
                 mode = PGMoveMode;
                 title = @"\u271b";
 
-                originalY = frame.origin.y;
-
-                frame.origin.y = frame.origin.y + frame.size.height/2 - 266/2;
                 frame.size.height = 268;
 
                 [self addSubview:infoButton];
@@ -190,7 +187,6 @@
         case 5:
             expanded = NO;
             frame.size.height = 48;
-            frame.origin.y = originalY;
 
             title = @"\u25C9";
 
@@ -208,7 +204,9 @@
     
     [commandButton setTitle:title forState:UIControlStateNormal];
 
-    
+    // center along y
+    frame.origin.y = CGRectGetMidY(self.superview.bounds) - frame.size.height/2;
+
     self.clipsToBounds = YES;
     [UIView animateWithDuration:0.15 animations:^{
         self.frame = frame;
@@ -249,6 +247,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.frame = CGRectMake(0, 0, 50, 48);
+        self.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleTopMargin;
 
         UIImage *backgroundImage = [self backgroundImage];
 
