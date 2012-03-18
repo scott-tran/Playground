@@ -59,7 +59,7 @@
     CGContextStrokePath(context);
     NSString *left = [NSString stringWithFormat:@"%.0f", minX];
     CGSize leftSize = [left sizeWithFont:font];
-    CGRect leftRect = CGRectMake(1, midY, leftSize.width, leftSize.height);
+    CGRect leftRect = CGRectMake(1, midY + 6, leftSize.width, leftSize.height);
     [left drawInRect:leftRect withFont:font];
 
     // right
@@ -68,7 +68,7 @@
     CGContextStrokePath(context);
     NSString *right = [NSString stringWithFormat:@"%.0f", rect.size.width - maxX];
     CGSize rightSize = [right sizeWithFont:font];
-    CGRect rightRect = CGRectMake(rect.size.width - rightSize.width - 1, midY, rightSize.width, rightSize.height);
+    CGRect rightRect = CGRectMake(rect.size.width - rightSize.width - 1, midY + 6, rightSize.width, rightSize.height);
     [right drawInRect:rightRect withFont:font];
 
     // top
@@ -77,7 +77,7 @@
     CGContextStrokePath(context);
     NSString *top = [NSString stringWithFormat:@"%.0f", minY];
     CGSize topSize = [top sizeWithFont:font];
-    CGRect topRect = CGRectMake(midX + 2, 1, topSize.width, topSize.height);
+    CGRect topRect = CGRectMake(midX + 6, 1, topSize.width, topSize.height);
     [top drawInRect:topRect withFont:font];
 
     // bottom
@@ -86,7 +86,7 @@
     CGContextStrokePath(context);
     NSString *bottom = [NSString stringWithFormat:@"%.0f", rect.size.height - maxY];
     CGSize bottomSize = [bottom sizeWithFont:font];
-    CGRect bottomRect = CGRectMake(midX + 2, rect.size.height - bottomSize.height - 1, bottomSize.width, bottomSize.height);
+    CGRect bottomRect = CGRectMake(midX + 6, rect.size.height - bottomSize.height - 1, bottomSize.width, bottomSize.height);
     [bottom drawInRect:bottomRect withFont:font];
 
 }
