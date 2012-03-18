@@ -100,34 +100,16 @@
     if (recognizer.state == UIGestureRecognizerStateEnded) {
         self.locked = !locked;
 
-        UILabel *label = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
-        label.backgroundColor = [UIColor blackColor];
-        label.textColor = [UIColor whiteColor];
-        label.textAlignment = UITextAlignmentCenter;
-        label.font = [UIFont boldSystemFontOfSize:25];
-        label.layer.cornerRadius = 5;
-
+        NSString *message = nil;
         if (locked) {
-            label.text = @"Locked";
+            message = @"Locked";
             [toolbar removeFromSuperview];
+            [targetView removeFromSuperview];
         } else {
-            label.text = @"Unlocked";
+            message = @"Unlocked";
         }
 
-        CGRect frame = self.rootViewController.view.bounds;
-
-        [label sizeToFit];
-        label.frame = CGRectInset(label.frame, -40, -20);
-        label.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
-
-        [self.rootViewController.view addSubview:label];
-
-        [UIView animateWithDuration:1 delay:1 options:UIViewAnimationOptionCurveLinear animations:^{
-            label.alpha = 0;
-        }  completion:^(BOOL finished) {
-            [label removeFromSuperview];
-
-        }];
+        [PGWindow displayMessage:message];
     }
 }
 
@@ -275,7 +257,7 @@
     if (locked) {
         return NO;
     } else {
-        if (toolbar.superview && (CGRectContainsPoint(toolbar.frame, [gestureRecognizer locationInView:self.rootViewController.view]))) {
+        if (toolbar.superview && (toolbar.overlay.superview || (CGRectContainsPoint(toolbar.frame, [gestureRecognizer locationInView:self.rootViewController.view])))) {
             return NO;
         } else {
             return YES;
@@ -340,4 +322,30 @@
     [super dealloc];
 }
 
++ (void)displayMessage:(NSString *)message {
+    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
+    label.backgroundColor = [UIColor blackColor];
+    label.textColor = [UIColor whiteColor];
+    label.textAlignment = UITextAlignmentCenter;
+    label.font = [UIFont boldSystemFontOfSize:25];
+    label.layer.cornerRadius = 5;
+
+    label.text = message;
+
+    UIView *rootView =  [UIApplication sharedApplication].delegate.window.rootViewController.view;
+    CGRect frame = rootView.bounds;
+
+    [label sizeToFit];
+    label.frame = CGRectInset(label.frame, -40, -20);
+    label.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
+
+    [rootView addSubview:label];
+
+    [UIView animateWithDuration:.5 delay:1 options:UIViewAnimationOptionCurveLinear animations:^{
+        label.alpha = 0;
+    }  completion:^(BOOL finished) {
+        [label removeFromSuperview];
+
+    }];    
+}
 @end

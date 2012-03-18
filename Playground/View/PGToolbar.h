@@ -28,9 +28,10 @@ typedef enum {
     UIButton *downButton;
 
     UIView *commandBar;
+    UIView *overlay;
 
     BOOL expanded;
-    BOOL showCommands;
+    CGFloat originalY;
 
     PGToolbarMode mode;
 
@@ -44,6 +45,8 @@ typedef enum {
 @property(nonatomic, retain) UIButton *upButton;
 @property(nonatomic, retain) UIButton *downButton;
 @property(nonatomic, strong) UIView *commandBar;
+@property(nonatomic, strong) UIView *overlay;
+
 
 - (void)updateTargetInfo;
 @end

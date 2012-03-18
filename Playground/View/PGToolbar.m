@@ -6,6 +6,7 @@
 
 #import "PGToolbar.h"
 #import "PGAction.h"
+#import "PGWindow.h"
 
 @implementation PGToolbar {
 
@@ -20,19 +21,20 @@
 @synthesize upButton;
 @synthesize downButton;
 @synthesize commandBar;
+@synthesize overlay;
 
 
 - (void)updateTargetInfo {
+    NSString *title = @"";
     if (target) {
         NSString *name = !target.accessibilityIdentifier ? NSStringFromClass([target class]) : target.accessibilityIdentifier;
-        NSString *title = [NSString stringWithFormat:@" %@:%d\n  %@",
-                                                     name,
-                                                     target.tag,
-                                                     NSStringFromCGRect(target.frame)];
-        [infoButton setTitle:title forState:UIControlStateNormal];
-    } else {
-//        info.text = @"";
+        title = [NSString stringWithFormat:@" %@:%d\n  %@",
+                                           name,
+                                           target.tag,
+                                           NSStringFromCGRect(target.frame)];
     }
+
+    [infoButton setTitle:title forState:UIControlStateNormal];
 }
 
 - (void)sendAction:(PGAction)action {
@@ -121,41 +123,77 @@
 }
 
 - (void)selectCommand:(UIButton *)button {
+    NSString *message = nil;
     NSString *title = [commandButton titleForState:UIControlStateNormal];
 
     CGRect frame = self.frame;
-    CGPoint center = self.center;
     frame.size.width = 50;
 
-    [commandBar removeFromSuperview];
+    [overlay removeFromSuperview];
+    
+    if (commandBar.superview) {
+        [UIView animateWithDuration:0.15 animations:^{
+            CGRect commandFrame = commandBar.frame;
+            commandFrame.size.width = 50;
+            commandBar.frame = commandFrame;
+        }  completion:^(BOOL finished) {
+            [commandBar removeFromSuperview];
+        }];
+    }
+
     switch (button.tag) {
         case 1:
-            expanded = YES;
-            frame.size.height = 268;
-            frame.size.width = 196;
-            [self addSubview:infoButton];
-            [self addSubview:leftButton];
-            [self addSubview:rightButton];
-            [self addSubview:upButton];
-            [self addSubview:downButton];
+            if (expanded) {
+                frame.size.width = 196;
+                overlay.frame = [[UIScreen mainScreen] bounds];
+                [self.superview insertSubview:overlay belowSubview:self];
 
-            [self addSubview:commandBar];
+                [self addSubview:commandBar];
+                [UIView animateWithDuration:0.15 animations:^{
+                    CGRect commandFrame = commandBar.frame;
+                    commandFrame.size.width = 196;
+                    commandBar.frame = commandFrame;
+                }];
+            } else {
+                expanded = YES;
+                mode = PGMoveMode;
+                title = @"\u271b";
+
+                originalY = frame.origin.y;
+
+                frame.origin.y = frame.origin.y + frame.size.height/2 - 266/2;
+                frame.size.height = 268;
+
+                [self addSubview:infoButton];
+                [self addSubview:leftButton];
+                [self addSubview:rightButton];
+                [self addSubview:upButton];
+                [self addSubview:downButton];
+            }
+
             break;
         case 2:
             mode = PGMoveMode;
             title = [button titleForState:UIControlStateNormal];
+            message = @"Move";
             break;
         case 3:
             mode = PGResizeMode;
             title = [button titleForState:UIControlStateNormal];
+            message = @"Resize";
             break;
         case 4:
             mode = PGNavigateMode;
             title = [button titleForState:UIControlStateNormal];
+            message = @"Navigate";
             break;
         case 5:
             expanded = NO;
             frame.size.height = 48;
+            frame.origin.y = originalY;
+
+            title = @"\u25C9";
+
             [infoButton removeFromSuperview];
             [leftButton removeFromSuperview];
             [rightButton removeFromSuperview];
@@ -164,27 +202,28 @@
             break;
     }
 
-    [commandButton setTitle:[button titleForState:UIControlStateNormal] forState:UIControlStateNormal];
-    self.frame = frame;
-    self.center = center;
+    if (message) {
+        [PGWindow displayMessage:message];
+    }
+    
+    [commandButton setTitle:title forState:UIControlStateNormal];
 
-    // pin to left
-    frame = self.frame;
-    frame.origin.x = 0;
-    self.frame = frame;
+    
+    self.clipsToBounds = YES;
+    [UIView animateWithDuration:0.15 animations:^{
+        self.frame = frame;
+    }  completion:^(BOOL finished) {
+        self.clipsToBounds = NO;
+    }];
+
 
     [self changeMode];
-}
-
-- (void)infoAction {
-    NSLog(@"info action");
 }
 
 - (UIImage *)backgroundImage {
     UIGraphicsBeginImageContext(CGSizeMake(1, 2));
     CGContextRef context = UIGraphicsGetCurrentContext();
-//    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:31/255.0 green:31/255.0 blue:31/255.0 alpha:1].CGColor);
-    CGContextSetFillColorWithColor(context, [UIColor darkGrayColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:38/255.0 green:38/255.0 blue:38/255.0 alpha:1].CGColor);
 
     CGContextFillRect(context, CGRectMake(0, 0, 1, 2));
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -221,6 +260,8 @@
         [self addSubview:commandButton];
 
         self.commandBar = [[UIView alloc] initWithFrame:CGRectMake(2, 4, 190, 40)];
+        commandBar.clipsToBounds = YES;
+
         UIButton *move = [self createButtonWithBackground:backgroundImage];
         move.frame = CGRectMake(0, 0, 45, 40);
         move.tag = 2;
@@ -251,9 +292,8 @@
 
         self.infoButton = [self createButtonWithBackground:backgroundImage];
         infoButton.frame = CGRectMake(2, CGRectGetMaxY(commandButton.frame) + 4, 130, 40);
-        infoButton.titleLabel.font = [UIFont systemFontOfSize:12];
+        infoButton.titleLabel.font = [UIFont systemFontOfSize:11];
         infoButton.titleLabel.numberOfLines = 2;
-        [infoButton addTarget:self action:@selector(infoAction) forControlEvents:UIControlEventTouchUpInside];
 
         self.leftButton = [self createButtonWithBackground:backgroundImage];
         leftButton.frame = CGRectMake(2, CGRectGetMaxY(infoButton.frame) + 4, 45, 40);
@@ -271,9 +311,10 @@
         downButton.frame = CGRectMake(2, CGRectGetMaxY(upButton.frame) + 4, 45, 40);
         [downButton addTarget:self action:@selector(downAction) forControlEvents:UIControlEventTouchUpInside];
 
-//        [self changeMode];
-
-//        [self configureToolbar];
+        self.overlay = [[UIView alloc] initWithFrame:CGRectZero];
+        overlay.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        overlay.backgroundColor = [UIColor blackColor];
+        overlay.alpha = 0.5;
     }
 
     return self;

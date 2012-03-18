@@ -37,5 +37,7 @@
 
 - (id)initWithFrame:(CGRect)frame locked:(BOOL)lock;
 
++ (void)displayMessage:(NSString *)message;
+
 
 @end
