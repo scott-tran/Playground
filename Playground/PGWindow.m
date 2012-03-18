@@ -225,7 +225,7 @@
             }
             break;
         case PGMoveRightInViews:
-            if (selectedIndex < [selectedView.superview.subviews count] - 1) {
+            if (selectedIndex < [selectedView.superview.subviews count] - 3) {
                 // account for subviews added
                 UIView *target = selectedView;
                 NSUInteger index = selectedIndex + 1;
