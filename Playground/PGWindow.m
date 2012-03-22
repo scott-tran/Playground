@@ -282,7 +282,7 @@
         self.locked = YES;
 
         UITapGestureRecognizer *unlockGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(unlockGesture:)];
-        unlockGesture.numberOfTouchesRequired = 2;
+        unlockGesture.numberOfTouchesRequired = 3;
         [self addGestureRecognizer:unlockGesture];
         [unlockGesture release];
 
