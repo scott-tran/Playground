@@ -130,13 +130,13 @@
     frame.size.width = 50;
 
     [overlay removeFromSuperview];
-    
+
     if (commandBar.superview) {
         [UIView animateWithDuration:0.15 animations:^{
             CGRect commandFrame = commandBar.frame;
             commandFrame.size.width = 50;
             commandBar.frame = commandFrame;
-        }  completion:^(BOOL finished) {
+        }                completion:^(BOOL finished) {
             [commandBar removeFromSuperview];
         }];
     }
@@ -144,14 +144,14 @@
     switch (button.tag) {
         case 1:
             if (expanded) {
-                frame.size.width = 196;
+                frame.size.width = 244;
                 overlay.frame = self.superview.bounds;
                 [self.superview insertSubview:overlay belowSubview:self];
 
                 [self addSubview:commandBar];
                 [UIView animateWithDuration:0.15 animations:^{
                     CGRect commandFrame = commandBar.frame;
-                    commandFrame.size.width = 196;
+                    commandFrame.size.width = 244;
                     commandBar.frame = commandFrame;
                 }];
             } else {
@@ -185,6 +185,8 @@
             message = @"Navigate";
             break;
         case 5:
+            [self sendAction:PGMailProperties];
+        case 6:
             expanded = NO;
             frame.size.height = 48;
 
@@ -201,16 +203,16 @@
     if (message) {
         [PGWindow displayMessage:message];
     }
-    
+
     [commandButton setTitle:title forState:UIControlStateNormal];
 
     // center along y
-    frame.origin.y = CGRectGetMidY(self.superview.bounds) - frame.size.height/2;
+    frame.origin.y = CGRectGetMidY(self.superview.bounds) - frame.size.height / 2;
 
     self.clipsToBounds = YES;
     [UIView animateWithDuration:0.15 animations:^{
         self.frame = frame;
-    }  completion:^(BOOL finished) {
+    }                completion:^(BOOL finished) {
         self.clipsToBounds = NO;
     }];
 
@@ -221,7 +223,7 @@
 - (UIImage *)backgroundImage {
     UIGraphicsBeginImageContext(CGSizeMake(1, 2));
     CGContextRef context = UIGraphicsGetCurrentContext();
-    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:38/255.0 green:38/255.0 blue:38/255.0 alpha:1].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:38 / 255.0 green:38 / 255.0 blue:38 / 255.0 alpha:1].CGColor);
 
     CGContextFillRect(context, CGRectMake(0, 0, 1, 2));
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
@@ -247,7 +249,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.frame = CGRectMake(0, 0, 50, 48);
-        self.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin|UIViewAutoresizingFlexibleTopMargin;
+        self.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleTopMargin;
 
         UIImage *backgroundImage = [self backgroundImage];
 
@@ -258,7 +260,7 @@
         [commandButton addTarget:self action:@selector(selectCommand:) forControlEvents:UIControlEventTouchUpInside];
         [self addSubview:commandButton];
 
-        self.commandBar = [[UIView alloc] initWithFrame:CGRectMake(2, 4, 190, 40)];
+        self.commandBar = [[[UIView alloc] initWithFrame:CGRectMake(2, 4, 230, 40)] autorelease];
         commandBar.clipsToBounds = YES;
 
         UIButton *move = [self createButtonWithBackground:backgroundImage];
@@ -282,9 +284,16 @@
         [navigate addTarget:self action:@selector(selectCommand:) forControlEvents:UIControlEventTouchUpInside];
         [commandBar addSubview:navigate];
 
+        UIButton *mail = [self createButtonWithBackground:backgroundImage];
+        mail.frame = CGRectMake(CGRectGetMaxX(navigate.frame) + 4, 0, 45, 40);
+        mail.tag = 5;
+        [mail setTitle:@"\u25B3" forState:UIControlStateNormal];
+        [mail addTarget:self action:@selector(selectCommand:) forControlEvents:UIControlEventTouchUpInside];
+        [commandBar addSubview:mail];
+
         UIButton *collapse = [self createButtonWithBackground:backgroundImage];
-        collapse.frame = CGRectMake(CGRectGetMaxX(navigate.frame) + 4, 0, 45, 40);
-        collapse.tag = 5;
+        collapse.frame = CGRectMake(CGRectGetMaxX(mail.frame) + 4, 0, 45, 40);
+        collapse.tag = 6;
         [collapse setTitle:@"\u25C9" forState:UIControlStateNormal];
         [collapse addTarget:self action:@selector(selectCommand:) forControlEvents:UIControlEventTouchUpInside];
         [commandBar addSubview:collapse];
@@ -310,13 +319,26 @@
         downButton.frame = CGRectMake(2, CGRectGetMaxY(upButton.frame) + 4, 45, 40);
         [downButton addTarget:self action:@selector(downAction) forControlEvents:UIControlEventTouchUpInside];
 
-        self.overlay = [[UIView alloc] initWithFrame:CGRectZero];
+        self.overlay = [[[UIView alloc] initWithFrame:CGRectZero] autorelease];
         overlay.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         overlay.backgroundColor = [UIColor blackColor];
         overlay.alpha = 0.5;
     }
 
     return self;
+}
+
+- (void)dealloc {
+    [super dealloc];
+
+    [commandButton release];
+    [infoButton release];
+    [leftButton release];
+    [rightButton release];
+    [upButton release];
+    [downButton release];
+    [commandBar release];
+    [overlay release];
 }
 
 @end

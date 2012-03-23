@@ -6,6 +6,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import "PGAction.h"
 
 @class PGTargetView;
@@ -14,8 +15,9 @@
 @class PGToolbar;
 
 @interface PGWindow : UIWindow
-<PGActionDelegate,
-        UIGestureRecognizerDelegate> {
+        <PGActionDelegate,
+        UIGestureRecognizerDelegate,
+        MFMailComposeViewControllerDelegate> {
 
     BOOL locked;
 
@@ -36,6 +38,8 @@
 
 
 - (id)initWithFrame:(CGRect)frame locked:(BOOL)lock;
+
++ (UIImage *)createScreenshot:(UIView *)view;
 
 + (void)displayMessage:(NSString *)message;
 

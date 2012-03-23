@@ -77,6 +77,8 @@
         [self sendAction:PGMoveDownInViews];
     } else if ([text isEqualToString:@"p"]) {
         [self sendAction:PGProperties];
+    } else if ([text isEqualToString:@"m"]) {
+        [self sendAction:PGMailProperties];
     }
 
     return NO;

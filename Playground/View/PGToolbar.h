@@ -43,8 +43,8 @@ typedef enum {
 @property(nonatomic, retain) UIButton *rightButton;
 @property(nonatomic, retain) UIButton *upButton;
 @property(nonatomic, retain) UIButton *downButton;
-@property(nonatomic, strong) UIView *commandBar;
-@property(nonatomic, strong) UIView *overlay;
+@property(nonatomic, retain) UIView *commandBar;
+@property(nonatomic, retain) UIView *overlay;
 
 
 - (void)updateTargetInfo;

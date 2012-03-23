@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E440377E151CE08700B33299 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E440377D151CE08700B33299 /* MessageUI.framework */; };
 		E49056A9150649F4007826EF /* PGMenuView.h in Headers */ = {isa = PBXBuildFile; fileRef = E49056A7150649F4007826EF /* PGMenuView.h */; };
 		E49056AA150649F4007826EF /* PGMenuView.m in Sources */ = {isa = PBXBuildFile; fileRef = E49056A8150649F4007826EF /* PGMenuView.m */; };
 		E4BAC8E8150CECCD00630D90 /* PGToolbar.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BAC8E6150CECCD00630D90 /* PGToolbar.h */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E440377D151CE08700B33299 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		E49056A7150649F4007826EF /* PGMenuView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGMenuView.h; sourceTree = "<group>"; };
 		E49056A8150649F4007826EF /* PGMenuView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGMenuView.m; sourceTree = "<group>"; };
 		E4BAC8E6150CECCD00630D90 /* PGToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGToolbar.h; sourceTree = "<group>"; };
@@ -48,6 +50,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E440377E151CE08700B33299 /* MessageUI.framework in Frameworks */,
 				E4BCF93A1503D5C60092052F /* QuartzCore.framework in Frameworks */,
 				E4BCF9381503D5BF0092052F /* UIKit.framework in Frameworks */,
 				E4BCF9221503D3BC0092052F /* Foundation.framework in Frameworks */,
@@ -78,6 +81,7 @@
 		E4BCF9201503D3BC0092052F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E440377D151CE08700B33299 /* MessageUI.framework */,
 				E4BCF9391503D5C60092052F /* QuartzCore.framework */,
 				E4BCF9371503D5BF0092052F /* UIKit.framework */,
 				E4BCF9211503D3BC0092052F /* Foundation.framework */,

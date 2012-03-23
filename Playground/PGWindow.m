@@ -4,11 +4,19 @@
 //
 
 
+#import <MessageUI/MessageUI.h>
 #import "PGWindow.h"
 #import "PGTargetView.h"
 #import "PGInputView.h"
 #import "PGToolbar.h"
 
+
+@interface PGWindow ()
+- (NSString *)propertiesForView:(UIView *)target;
+
+- (void)emailProperties;
+
+@end
 
 @implementation PGWindow {
 
@@ -16,7 +24,6 @@
 }
 @synthesize locked;
 @synthesize toolbar;
-
 
 - (NSMutableArray *)viewsAtPoint:(CGPoint)touchPoint view:(UIView *)view {
     NSMutableArray *views = [[NSMutableArray alloc] init];
@@ -244,15 +251,11 @@
             }
             break;
         case PGProperties:
-        {
-            NSString *name = !selectedView.accessibilityIdentifier ? NSStringFromClass([selectedView class]) : selectedView.accessibilityIdentifier;
-
-            NSMutableString *properties = [NSMutableString stringWithFormat:@"\n************* %@ : %@ : %d *************\n", name, selectedView.class, selectedView.tag];
-            [properties appendFormat:@"FRAME:\nCGRectMake(%.0f, %.0f, %.0f, %.0f);\n", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
-
-            NSLog(@"%@", properties);
+            NSLog(@"%@", [self propertiesForView:selectedView]);
             break;
-        }
+        case PGMailProperties:
+            [self emailProperties];
+            break;
         default:
             break;
     }
@@ -316,9 +319,11 @@
     } else {
         if (CGRectContainsPoint(toolbar.frame, [self convertPoint:point toView:self.rootViewController.view])) {
             return [super hitTest:point withEvent:event];
+        } else {
+            // prevent subviews from receiving events
+            return self;
         }
-        // prevent subviews from receiving events
-        return self;
+
     }
 }
 
@@ -328,6 +333,64 @@
     [toolbar release];
 
     [super dealloc];
+}
+
+- (NSString *)propertiesForView:(UIView *)target {
+    NSString *name = !target.accessibilityIdentifier ? NSStringFromClass([target class]) : target.accessibilityIdentifier;
+    CGRect frame = target.frame;
+    CGPoint center = target.center;
+
+    NSMutableString *properties = [NSMutableString stringWithFormat:@"\n************* %@ : %d *************\n", name, target.tag];
+    [properties appendFormat:@"FRAME:\nCGRectMake(%.0f, %.0f, %.0f, %.0f);\n", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height];
+    [properties appendFormat:@"CENTER:\nCGPointMake(%.0f, %.0f);\n", center.x, center.y];
+
+    return properties;
+}
+
+- (void)emailProperties {
+    if ([MFMailComposeViewController canSendMail]) {
+        MFMailComposeViewController *controller = [[MFMailComposeViewController alloc] init];
+        controller.modalPresentationStyle = UIModalPresentationFormSheet;
+        controller.mailComposeDelegate = self;
+
+        NSString *message = [self propertiesForView:selectedView];
+        [controller setMessageBody:message isHTML:NO];
+
+        toolbar.hidden = YES;
+//        targetView.hidden = YES;
+
+        UIImage *screenshot = [PGWindow createScreenshot:self.rootViewController.view];
+        NSData *data = UIImagePNGRepresentation(screenshot);
+        [controller addAttachmentData:data mimeType:@"image/png" fileName:@"screenshot.png"];
+
+        toolbar.hidden = NO;
+//        targetView.hidden = NO;
+
+        locked = YES;
+        [self.rootViewController presentModalViewController:controller animated:YES];
+        [controller release];
+    } else {
+
+        [PGWindow displayMessage:@"Unable to send mail"];
+    }
+}
+
+#pragma mark mail delegate
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
+    locked = NO;
+    [self.rootViewController dismissModalViewControllerAnimated:YES];
+}
+
++ (UIImage *)createScreenshot:(UIView *)view {
+	UIGraphicsBeginImageContext(view.bounds.size);
+	CGContextRef context = UIGraphicsGetCurrentContext();
+
+	[view.layer renderInContext:context];
+
+	UIImage *shot = UIGraphicsGetImageFromCurrentImageContext();
+	UIGraphicsEndImageContext();
+
+	return shot;
 }
 
 + (void)displayMessage:(NSString *)message {
