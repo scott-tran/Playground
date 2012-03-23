@@ -88,6 +88,7 @@
 		E4BCF9231503D3BC0092052F /* Playground */ = {
 			isa = PBXGroup;
 			children = (
+				E4BCF93A1503D5C60092053D /* PGAction.h */,
 				E4BCF93A1503D5C600920532 /* PGWindow.h */,
 				E4BCF93A1503D5C600920530 /* PGWindow.m */,
 				E4BCF9261503D3BC0092052F /* Playground.h */,
@@ -108,7 +109,6 @@
 		E4BCF93A1503D5C600920534 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				E4BCF93A1503D5C60092053D /* PGAction.h */,
 				E4BCF93A1503D5C60092053B /* PGInputView.h */,
 				E4BCF93A1503D5C600920539 /* PGInputView.m */,
 				E49056A7150649F4007826EF /* PGMenuView.h */,
