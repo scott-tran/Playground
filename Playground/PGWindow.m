@@ -367,10 +367,13 @@
 //        targetView.hidden = NO;
 
         locked = YES;
+        if (inputView) {
+            [inputView deactivateKeyboard];
+            [inputView removeFromSuperview];
+        }
         [self.rootViewController presentModalViewController:controller animated:YES];
         [controller release];
     } else {
-
         [PGWindow displayMessage:@"Unable to send mail"];
     }
 }
@@ -379,6 +382,10 @@
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
     locked = NO;
     [self.rootViewController dismissModalViewControllerAnimated:YES];
+    if (inputView) {
+        [self addSubview:inputView];
+        [inputView activateKeyboard];
+    }
 }
 
 + (UIImage *)createScreenshot:(UIView *)view {
