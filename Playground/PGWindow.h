@@ -9,8 +9,8 @@
 #import <MessageUI/MessageUI.h>
 #import "PGAction.h"
 
+
 @class PGTargetView;
-@class PGMenuView;
 @class PGInputView;
 @class PGToolbar;
 
@@ -19,7 +19,8 @@
         UIGestureRecognizerDelegate,
         MFMailComposeViewControllerDelegate> {
 
-    BOOL locked;
+    BOOL active;
+    UIGestureRecognizer *activateGestureRecognizer;
 
     UIView *selectedView;
     NSUInteger selectedIndex;
@@ -33,11 +34,9 @@
     BOOL moving;
 
 }
-@property(nonatomic) BOOL locked;
+@property(nonatomic) BOOL active;
 @property(nonatomic, retain) PGToolbar *toolbar;
-
-
-- (id)initWithFrame:(CGRect)frame locked:(BOOL)lock;
+@property(nonatomic, strong) UIGestureRecognizer *activateGestureRecognizer;
 
 + (UIImage *)createScreenshot:(UIView *)view;
 

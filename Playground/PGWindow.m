@@ -10,7 +10,6 @@
 #import "PGInputView.h"
 #import "PGToolbar.h"
 
-
 @interface PGWindow ()
 - (NSString *)propertiesForView:(UIView *)target;
 
@@ -22,8 +21,10 @@
 
 
 }
-@synthesize locked;
+@synthesize active;
 @synthesize toolbar;
+@synthesize activateGestureRecognizer;
+
 
 - (NSMutableArray *)viewsAtPoint:(CGPoint)touchPoint view:(UIView *)view {
     NSMutableArray *views = [[NSMutableArray alloc] init];
@@ -111,17 +112,17 @@
 
 }
 
-- (void)unlockGesture:(UIGestureRecognizer *)recognizer {
+- (void)activateGesture:(UIGestureRecognizer *)recognizer {
     if (recognizer.state == UIGestureRecognizerStateEnded) {
-        self.locked = !locked;
+        self.active = !active;
 
         NSString *message = nil;
-        if (locked) {
-            message = @"Locked";
+        if (active) {
+            message = @"Active";
+        } else {
+            message = @"Inactive";
             [toolbar removeFromSuperview];
             [targetView removeFromSuperview];
-        } else {
-            message = @"Unlocked";
         }
 
         [PGWindow displayMessage:message];
@@ -265,29 +266,31 @@
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
-    if (locked) {
-        return NO;
-    } else {
+    if (active) {
         if (toolbar.superview && (toolbar.overlay.superview || (CGRectContainsPoint(toolbar.frame, [gestureRecognizer locationInView:self.rootViewController.view])))) {
             return NO;
         } else {
             return YES;
         }
+    } else {
+        return NO;
     }
+}
+
+- (void)setActivateGestureRecognizer:(UIGestureRecognizer *)anActivateGestureRecognizer {
+    [self removeGestureRecognizer:activateGestureRecognizer];
+    [activateGestureRecognizer release];
+
+    activateGestureRecognizer = [anActivateGestureRecognizer retain];
+    [activateGestureRecognizer addTarget:self action:@selector(activateGesture:)];
+    [self addGestureRecognizer:activateGestureRecognizer];
 }
 
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor yellowColor];
         self.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         self.userInteractionEnabled = YES;
-        self.locked = YES;
-
-        UITapGestureRecognizer *unlockGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(unlockGesture:)];
-        unlockGesture.numberOfTouchesRequired = 3;
-        [self addGestureRecognizer:unlockGesture];
-        [unlockGesture release];
 
         UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGesture:)];
         tapGesture.delegate = self;
@@ -299,31 +302,24 @@
         [self addGestureRecognizer:panGesture];
         [panGesture release];
 
+        UITapGestureRecognizer *defaultActivateGesture = [[UITapGestureRecognizer alloc] init];
+        defaultActivateGesture.numberOfTouchesRequired = 3;
+        self.activateGestureRecognizer = defaultActivateGesture;
+
     }
-
-    return self;
-}
-
-- (id)initWithFrame:(CGRect)frame locked:(BOOL)lock {
-    self = [self initWithFrame:frame];
-    if (self) {
-        self.locked = lock;
-    }
-
     return self;
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
-    if (locked) {
-        return [super hitTest:point withEvent:event];
-    } else {
+    if (active) {
         if (CGRectContainsPoint(toolbar.frame, [self convertPoint:point toView:self.rootViewController.view])) {
             return [super hitTest:point withEvent:event];
         } else {
             // prevent subviews from receiving events
             return self;
         }
-
+    } else {
+        return [super hitTest:point withEvent:event];
     }
 }
 
@@ -366,7 +362,7 @@
         toolbar.hidden = NO;
 //        targetView.hidden = NO;
 
-        locked = YES;
+        active = NO;
         if (inputView) {
             [inputView deactivateKeyboard];
             [inputView removeFromSuperview];
@@ -380,7 +376,7 @@
 
 #pragma mark mail delegate
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
-    locked = NO;
+    active = YES;
     [self.rootViewController dismissModalViewControllerAnimated:YES];
     if (inputView) {
         [self addSubview:inputView];
@@ -389,19 +385,19 @@
 }
 
 + (UIImage *)createScreenshot:(UIView *)view {
-	UIGraphicsBeginImageContext(view.bounds.size);
-	CGContextRef context = UIGraphicsGetCurrentContext();
+    UIGraphicsBeginImageContext(view.bounds.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
 
-	[view.layer renderInContext:context];
+    [view.layer renderInContext:context];
 
-	UIImage *shot = UIGraphicsGetImageFromCurrentImageContext();
-	UIGraphicsEndImageContext();
+    UIImage *shot = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
 
-	return shot;
+    return shot;
 }
 
 + (void)displayMessage:(NSString *)message {
-    UILabel *label = [[[UILabel alloc] initWithFrame:CGRectZero] autorelease];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.backgroundColor = [UIColor blackColor];
     label.textColor = [UIColor whiteColor];
     label.textAlignment = UITextAlignmentCenter;
@@ -418,6 +414,7 @@
     label.center = CGPointMake(CGRectGetMidX(frame), CGRectGetMidY(frame));
 
     [rootView addSubview:label];
+    [label release];
 
     [UIView animateWithDuration:.5 delay:1 options:UIViewAnimationOptionCurveLinear animations:^{
         label.alpha = 0;
