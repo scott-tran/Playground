@@ -302,8 +302,8 @@
         [self addGestureRecognizer:panGesture];
         [panGesture release];
 
-        UITapGestureRecognizer *defaultActivateGesture = [[UITapGestureRecognizer alloc] init];
-        defaultActivateGesture.numberOfTouchesRequired = 3;
+        UILongPressGestureRecognizer *defaultActivateGesture = [[UILongPressGestureRecognizer alloc] init];
+        defaultActivateGesture.numberOfTouchesRequired = 2;
         self.activateGestureRecognizer = defaultActivateGesture;
 
     }
