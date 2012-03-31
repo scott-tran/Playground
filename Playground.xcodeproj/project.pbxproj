@@ -33,7 +33,6 @@
 		E4BCF91E1503D3BC0092052F /* libPlayground.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPlayground.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4BCF9211503D3BC0092052F /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E4BCF9251503D3BC0092052F /* Playground-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Playground-Prefix.pch"; path = "../Playground-Prefix.pch"; sourceTree = "<group>"; };
-		E4BCF9261503D3BC0092052F /* Playground.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Playground.h; sourceTree = "<group>"; };
 		E4BCF9371503D5BF0092052F /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		E4BCF9391503D5C60092052F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		E4BCF93A1503D5C600920530 /* PGWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGWindow.m; sourceTree = "<group>"; };
@@ -95,7 +94,6 @@
 				E4BCF93A1503D5C60092053D /* PGAction.h */,
 				E4BCF93A1503D5C600920532 /* PGWindow.h */,
 				E4BCF93A1503D5C600920530 /* PGWindow.m */,
-				E4BCF9261503D3BC0092052F /* Playground.h */,
 				E4BCF93A1503D5C600920534 /* View */,
 			);
 			path = Playground;
