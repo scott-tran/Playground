@@ -53,9 +53,11 @@
 
 - (void)deactivateTarget {
     selectedView = nil;
+    selectedIndex = 0;
 
     toolbar.target = nil;
     [toolbar updateTargetInfo];
+    [toolbar removeFromSuperview];
 
     [targetView removeFromSuperview];
 
@@ -238,14 +240,18 @@
             }
             break;
         case PGMoveRightInViews:
-            if (selectedIndex < [selectedView.superview.subviews count] - 3) {
-                // account for subviews added
-                UIView *target = selectedView;
-                NSUInteger index = selectedIndex + 1;
-                [self deactivateTarget];
-                [self activateTarget:[target.superview.subviews objectAtIndex:index]];
+        {
+            NSUInteger index = selectedIndex;
+            UIView *target = selectedView;
+
+            [self deactivateTarget];
+            if (index < [target.superview.subviews count] - 1) {
+                index++;
             }
+            [self activateTarget:[target.superview.subviews objectAtIndex:index]];
+
             break;
+        }
         case PGMoveUpInViews:
             if (selectedView.superview) {
                 [self activateTarget:selectedView.superview];
