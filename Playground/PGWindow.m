@@ -142,45 +142,50 @@
 
 - (void)moveGesture:(UIGestureRecognizer *)recognizer {
     if (selectedView) {
-        CGPoint touchPoint = [recognizer locationInView:self.rootViewController.view];
+        CGPoint touchPoint = [recognizer locationInView:targetView];
 
         if (recognizer.state == UIGestureRecognizerStateBegan) {
             startPoint = touchPoint;
             // inside target
             if ([targetView shouldMove:touchPoint]) {
-                moving = YES;
+                moving = 1;
             } else if ([targetView shouldResize:touchPoint]) {
-                moving = NO;
+                moving = -1;
+            } else {
+                moving = 0;
             }
         }
 
         if (recognizer.state == UIGestureRecognizerStateChanged) {
+
             CGRect frame = selectedView.frame;
-            if (moving) {
-                CGPoint vector = CGPointMake(startPoint.x - touchPoint.x, startPoint.y - touchPoint.y);
+            CGPoint vector = CGPointMake(startPoint.x - touchPoint.x, startPoint.y - touchPoint.y);
 
-                // move selectedview
-                frame.origin.x -= vector.x;
-                frame.origin.y -= vector.y;
-            } else {
-                // resize selected view
-                CGPoint vector = CGPointMake(startPoint.x - touchPoint.x, startPoint.y - touchPoint.y);
-
-                if (selectedView.center.x > touchPoint.x) {
+            switch (moving) {
+                case 1:
+                    // move selectedview
                     frame.origin.x -= vector.x;
-                    frame.size.width += vector.x;
-                } else {
-                    frame.size.width -= vector.x;
-                }
-
-                if (selectedView.center.y > touchPoint.y) {
                     frame.origin.y -= vector.y;
-                    frame.size.height += vector.y;
-                } else {
-                    frame.size.height -= vector.y;
-                }
-            }
+                    break;
+                case -1:
+                    // resize selected view
+                    if (selectedView.center.x > touchPoint.x) {
+                        frame.origin.x -= vector.x;
+                        frame.size.width += vector.x;
+                    } else {
+                        frame.size.width -= vector.x;
+                    }
 
+                    if (selectedView.center.y > touchPoint.y) {
+                        frame.origin.y -= vector.y;
+                        frame.size.height += vector.y;
+                    } else {
+                        frame.size.height -= vector.y;
+                    }
+                    break;
+                default:
+                    return;
+            }
             selectedView.frame = frame;
 
             [toolbar updateTargetInfo];

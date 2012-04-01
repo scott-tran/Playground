@@ -31,7 +31,7 @@
     PGToolbar *toolbar;
 
     CGPoint startPoint;
-    BOOL moving;
+    NSInteger moving;
 
 }
 @property(nonatomic) BOOL active;
