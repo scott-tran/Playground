@@ -38,6 +38,6 @@ Keyboard Mapping
 
 License
 -------
-Apache License, Version 2.0
-by Scott Tran
+Apache License, Version 2.0  
+by Scott Tran  
 Twitter: [@scott_tran](http://twitter.com/scott_tran)
