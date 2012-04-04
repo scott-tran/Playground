@@ -18,7 +18,7 @@ To integrate Playground into your app:
 
     self.window = [[PGWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
-You can enable/disable Playground with a two finger long press gesture, or define your own by setting the activateGestureRecognizer property.
+You can enable/disable Playground with a two finger long press gesture or define your own by setting the activateGestureRecognizer property.
 
 Keyboard Mapping
 ----------------
