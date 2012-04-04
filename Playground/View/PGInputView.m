@@ -59,21 +59,21 @@
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    if ([text isEqualToString:@","]) {
+    if ([text isEqualToString:@"s"]) {
         [self sendAction:PGDecreaseHeight];
-    } else if ([text isEqualToString:@"."]) {
+    } else if ([text isEqualToString:@"w"]) {
         [self sendAction:PGIncreaseHeight];
-    } else if ([text isEqualToString:@"<"]) {
+    } else if ([text isEqualToString:@"a"]) {
         [self sendAction:PGDecreaseWidth];
-    } else if ([text isEqualToString:@">"]) {
+    } else if ([text isEqualToString:@"d"]) {
         [self sendAction:PGIncreaseWidth];
-    } else if ([text isEqualToString:@":"]) {
+    } else if ([text isEqualToString:@"j"]) {
         [self sendAction:PGMoveLeftInViews];
-    } else if ([text isEqualToString:@"\""]) {
+    } else if ([text isEqualToString:@"l"]) {
         [self sendAction:PGMoveRightInViews];
-    } else if ([text isEqualToString:@";"]) {
+    } else if ([text isEqualToString:@"i"]) {
         [self sendAction:PGMoveUpInViews];
-    } else if ([text isEqualToString:@"'"]) {
+    } else if ([text isEqualToString:@"k"]) {
         [self sendAction:PGMoveDownInViews];
     } else if ([text isEqualToString:@"p"]) {
         [self sendAction:PGProperties];
