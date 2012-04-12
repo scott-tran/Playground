@@ -313,9 +313,11 @@
         [self addGestureRecognizer:panGesture];
         [panGesture release];
 
-        UILongPressGestureRecognizer *defaultActivateGesture = [[UILongPressGestureRecognizer alloc] init];
+        UITapGestureRecognizer *defaultActivateGesture = [[UITapGestureRecognizer alloc] init];
+        defaultActivateGesture.numberOfTapsRequired = 2;
         defaultActivateGesture.numberOfTouchesRequired = 2;
         self.activateGestureRecognizer = defaultActivateGesture;
+        [defaultActivateGesture release];
 
     }
     return self;
@@ -338,6 +340,7 @@
     [targetView release];
     [inputView release];
     [toolbar release];
+    [activateGestureRecognizer release];
 
     [super dealloc];
 }
