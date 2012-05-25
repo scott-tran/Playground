@@ -30,7 +30,7 @@
     NSMutableArray *views = [[NSMutableArray alloc] init];
     for (UIView *subview in view.subviews) {
         if (CGRectContainsPoint(subview.frame, touchPoint)) {
-            if (subview != targetView) {
+            if (subview != targetView && !subview.hidden) {
                 [views addObject:subview];
                 [views addObjectsFromArray:[self viewsAtPoint:[view convertPoint:touchPoint toView:subview] view:subview]];
             }
