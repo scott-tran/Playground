@@ -11,7 +11,6 @@
 		E4BAC8E9150CECCD00630D90 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		E4BCF9221503D3BC0092052F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4BCF9211503D3BC0092052F /* Foundation.framework */; };
 		E4BCF9381503D5BF0092052F /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4BCF9371503D5BF0092052F /* UIKit.framework */; };
-		E4BCF93A1503D5C60092052F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4BCF9391503D5C60092052F /* QuartzCore.framework */; };
 		E4BCF93A1503D5C600920531 /* PGWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = E4BCF93A1503D5C600920530 /* PGWindow.m */; };
 		E4BCF93A1503D5C600920533 /* PGWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = E4BCF93A1503D5C600920532 /* PGWindow.h */; };
 		E4BCF93A1503D5C600920536 /* PGTargetView.m in Sources */ = {isa = PBXBuildFile; fileRef = E4BCF93A1503D5C600920535 /* PGTargetView.m */; };
@@ -42,7 +41,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4BCF93A1503D5C60092052F /* QuartzCore.framework in Frameworks */,
 				E4BCF9381503D5BF0092052F /* UIKit.framework in Frameworks */,
 				E4BCF9221503D3BC0092052F /* Foundation.framework in Frameworks */,
 			);

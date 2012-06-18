@@ -2,7 +2,7 @@ Playground
 ==========
 
 Playground is a utility that lets you inspect and modify layout properties while your app is running.
-Enable Playground with a gesture, update your layout and keep track of the changes through email.
+Enable Playground with a gesture, update your layout and print changes to the console.
 When running your app in the Simulator, there’s support for using the keyboard to modify
 layout properties.
 
@@ -12,7 +12,6 @@ Example project: [Playground Demo](https://github.com/scott-tran/PlaygroundDemo)
 
 Usage
 -----
-Add the QuartzCore and MessageUI frameworks to your project.
 Copy all the files in the Playground source folder to your project. If you’re using ARC, remember to add the `-fno-objc-arc` flag to the added files.
 To integrate Playground into your app:
 
@@ -33,7 +32,6 @@ Keyboard Mapping
 <tr><td border="0">Move up in view hierarchy</td><td border="0">i</td><tr/>
 <tr><td border="0">Move down in view hierarchy</td><td border="0">k</td><tr/>
 <tr><td border="0">Display properties in console</td><td border="0">p</td><tr/>
-<tr><td border="0">Mail properties</td><td border="0">m</td><tr/>
 </table>
 
 License
