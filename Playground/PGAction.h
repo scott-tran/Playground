@@ -16,8 +16,7 @@ typedef enum {
     PGMoveRightInViews,
     PGMoveUpInViews,
     PGMoveDownInViews,
-    PGProperties,
-    PGMailProperties
+    PGProperties
 } PGAction;
 
 @protocol PGActionDelegate

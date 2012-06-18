@@ -16,8 +16,7 @@
 
 @interface PGWindow : UIWindow
         <PGActionDelegate,
-        UIGestureRecognizerDelegate,
-        MFMailComposeViewControllerDelegate> {
+        UIGestureRecognizerDelegate> {
 
     BOOL active;
     UIGestureRecognizer *activateGestureRecognizer;
@@ -28,17 +27,12 @@
     PGInputView *inputView;
     PGTargetView *targetView;
 
-    PGToolbar *toolbar;
-
     CGPoint startPoint;
     NSInteger moving;
 
 }
 @property(nonatomic) BOOL active;
-@property(nonatomic, retain) PGToolbar *toolbar;
-@property(nonatomic, strong) UIGestureRecognizer *activateGestureRecognizer;
-
-+ (UIImage *)createScreenshot:(UIView *)view;
+@property(nonatomic, retain) UIGestureRecognizer *activateGestureRecognizer;
 
 + (void)displayMessage:(NSString *)message;
 

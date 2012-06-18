@@ -8,12 +8,9 @@
 #import "PGWindow.h"
 #import "PGTargetView.h"
 #import "PGInputView.h"
-#import "PGToolbar.h"
 
 @interface PGWindow ()
 - (NSString *)propertiesForView:(UIView *)target;
-
-- (void)emailProperties;
 
 @end
 
@@ -22,7 +19,6 @@
 
 }
 @synthesize active;
-@synthesize toolbar;
 @synthesize activateGestureRecognizer;
 
 
@@ -55,10 +51,6 @@
     selectedView = nil;
     selectedIndex = 0;
 
-    toolbar.target = nil;
-    [toolbar updateTargetInfo];
-    [toolbar removeFromSuperview];
-
     [targetView removeFromSuperview];
 
     if (inputView) {
@@ -89,21 +81,10 @@
         }
 #endif
 
-        if (!toolbar) {
-            self.toolbar = [[[PGToolbar alloc] initWithFrame:CGRectZero] autorelease];
-            toolbar.delegate = self;
-        }
-
-        toolbar.target = selectedView;
         targetView.target = selectedView;
 
         [view.superview addSubview:targetView];
 
-        CGRect rect = self.rootViewController.view.bounds;
-        toolbar.center = CGPointMake(toolbar.center.x, CGRectGetMidY(rect));
-        [self.rootViewController.view addSubview:toolbar];
-
-        [toolbar updateTargetInfo];
         [targetView setNeedsDisplay];
 
         if (inputView) {
@@ -123,7 +104,6 @@
             message = @"Active";
         } else {
             message = @"Inactive";
-            [toolbar removeFromSuperview];
             [targetView removeFromSuperview];
         }
 
@@ -190,7 +170,6 @@
             }
             selectedView.frame = frame;
 
-            [toolbar updateTargetInfo];
             [targetView setNeedsDisplay];
             startPoint = touchPoint;
         }
@@ -239,8 +218,7 @@
                 [self activateTarget:[selectedView.superview.subviews objectAtIndex:selectedIndex - 1]];
             }
             break;
-        case PGMoveRightInViews:
-        {
+        case PGMoveRightInViews: {
             NSUInteger index = selectedIndex;
             UIView *target = selectedView;
 
@@ -265,24 +243,16 @@
         case PGProperties:
             NSLog(@"%@", [self propertiesForView:selectedView]);
             break;
-        case PGMailProperties:
-            [self emailProperties];
-            break;
         default:
             break;
     }
 
-    [toolbar updateTargetInfo];
     [targetView setNeedsDisplay];
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
     if (active) {
-        if (toolbar.superview && (toolbar.overlay.superview || (CGRectContainsPoint(toolbar.frame, [gestureRecognizer locationInView:self.rootViewController.view])))) {
-            return NO;
-        } else {
-            return YES;
-        }
+        return YES;
     } else {
         return NO;
     }
@@ -325,12 +295,8 @@
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     if (active) {
-        if (CGRectContainsPoint(toolbar.frame, [self convertPoint:point toView:self.rootViewController.view])) {
-            return [super hitTest:point withEvent:event];
-        } else {
-            // prevent subviews from receiving events
-            return self;
-        }
+        // prevent subviews from receiving events
+        return self;
     } else {
         return [super hitTest:point withEvent:event];
     }
@@ -339,7 +305,6 @@
 - (void)dealloc {
     [targetView release];
     [inputView release];
-    [toolbar release];
     [activateGestureRecognizer release];
 
     [super dealloc];
@@ -355,59 +320,6 @@
     [properties appendFormat:@"CENTER:\nCGPointMake(%.0f, %.0f);\n", center.x, center.y];
 
     return properties;
-}
-
-- (void)emailProperties {
-    if ([MFMailComposeViewController canSendMail]) {
-        MFMailComposeViewController *controller = [[MFMailComposeViewController alloc] init];
-        controller.modalPresentationStyle = UIModalPresentationFormSheet;
-        controller.mailComposeDelegate = self;
-
-        NSString *message = [self propertiesForView:selectedView];
-        [controller setMessageBody:message isHTML:NO];
-
-        toolbar.hidden = YES;
-//        targetView.hidden = YES;
-
-        UIImage *screenshot = [PGWindow createScreenshot:self.rootViewController.view];
-        NSData *data = UIImagePNGRepresentation(screenshot);
-        [controller addAttachmentData:data mimeType:@"image/png" fileName:@"screenshot.png"];
-
-        toolbar.hidden = NO;
-//        targetView.hidden = NO;
-
-        active = NO;
-        if (inputView) {
-            [inputView deactivateKeyboard];
-            [inputView removeFromSuperview];
-        }
-        [self.rootViewController presentModalViewController:controller animated:YES];
-        [controller release];
-    } else {
-        [PGWindow displayMessage:@"Unable to send mail"];
-    }
-}
-
-#pragma mark mail delegate
-- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
-    active = YES;
-    [self.rootViewController dismissModalViewControllerAnimated:YES];
-    if (inputView) {
-        [self addSubview:inputView];
-        [inputView activateKeyboard];
-    }
-}
-
-+ (UIImage *)createScreenshot:(UIView *)view {
-    UIGraphicsBeginImageContext(view.bounds.size);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-
-    [view.layer renderInContext:context];
-
-    UIImage *shot = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-
-    return shot;
 }
 
 + (void)displayMessage:(NSString *)message {
